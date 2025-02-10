@@ -1067,22 +1067,22 @@ var tempI64;
 // === Body ===
 
 var ASM_CONSTS = {
-  1053532: ($0) => { var str = UTF8ToString($0) + '\n\n' + 'Abort/Retry/Ignore/AlwaysIgnore? [ariA] :'; var reply = window.prompt(str, "i"); if (reply === null) { reply = "i"; } return allocate(intArrayFromString(reply), 'i8', ALLOC_NORMAL); },  
- 1053757: () => { if (typeof(AudioContext) !== 'undefined') { return true; } else if (typeof(webkitAudioContext) !== 'undefined') { return true; } return false; },  
- 1053904: () => { if ((typeof(navigator.mediaDevices) !== 'undefined') && (typeof(navigator.mediaDevices.getUserMedia) !== 'undefined')) { return true; } else if (typeof(navigator.webkitGetUserMedia) !== 'undefined') { return true; } return false; },  
- 1054138: ($0) => { if(typeof(Module['SDL2']) === 'undefined') { Module['SDL2'] = {}; } var SDL2 = Module['SDL2']; if (!$0) { SDL2.audio = {}; } else { SDL2.capture = {}; } if (!SDL2.audioContext) { if (typeof(AudioContext) !== 'undefined') { SDL2.audioContext = new AudioContext(); } else if (typeof(webkitAudioContext) !== 'undefined') { SDL2.audioContext = new webkitAudioContext(); } if (SDL2.audioContext) { autoResumeAudioContext(SDL2.audioContext); } } return SDL2.audioContext === undefined ? -1 : 0; },  
- 1054631: () => { var SDL2 = Module['SDL2']; return SDL2.audioContext.sampleRate; },  
- 1054699: ($0, $1, $2, $3) => { var SDL2 = Module['SDL2']; var have_microphone = function(stream) { if (SDL2.capture.silenceTimer !== undefined) { clearTimeout(SDL2.capture.silenceTimer); SDL2.capture.silenceTimer = undefined; } SDL2.capture.mediaStreamNode = SDL2.audioContext.createMediaStreamSource(stream); SDL2.capture.scriptProcessorNode = SDL2.audioContext.createScriptProcessor($1, $0, 1); SDL2.capture.scriptProcessorNode.onaudioprocess = function(audioProcessingEvent) { if ((SDL2 === undefined) || (SDL2.capture === undefined)) { return; } audioProcessingEvent.outputBuffer.getChannelData(0).fill(0.0); SDL2.capture.currentCaptureBuffer = audioProcessingEvent.inputBuffer; dynCall('vi', $2, [$3]); }; SDL2.capture.mediaStreamNode.connect(SDL2.capture.scriptProcessorNode); SDL2.capture.scriptProcessorNode.connect(SDL2.audioContext.destination); SDL2.capture.stream = stream; }; var no_microphone = function(error) { }; SDL2.capture.silenceBuffer = SDL2.audioContext.createBuffer($0, $1, SDL2.audioContext.sampleRate); SDL2.capture.silenceBuffer.getChannelData(0).fill(0.0); var silence_callback = function() { SDL2.capture.currentCaptureBuffer = SDL2.capture.silenceBuffer; dynCall('vi', $2, [$3]); }; SDL2.capture.silenceTimer = setTimeout(silence_callback, ($1 / SDL2.audioContext.sampleRate) * 1000); if ((navigator.mediaDevices !== undefined) && (navigator.mediaDevices.getUserMedia !== undefined)) { navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(have_microphone).catch(no_microphone); } else if (navigator.webkitGetUserMedia !== undefined) { navigator.webkitGetUserMedia({ audio: true, video: false }, have_microphone, no_microphone); } },  
- 1056351: ($0, $1, $2, $3) => { var SDL2 = Module['SDL2']; SDL2.audio.scriptProcessorNode = SDL2.audioContext['createScriptProcessor']($1, 0, $0); SDL2.audio.scriptProcessorNode['onaudioprocess'] = function (e) { if ((SDL2 === undefined) || (SDL2.audio === undefined)) { return; } SDL2.audio.currentOutputBuffer = e['outputBuffer']; dynCall('vi', $2, [$3]); }; SDL2.audio.scriptProcessorNode['connect'](SDL2.audioContext['destination']); },  
- 1056761: ($0, $1) => { var SDL2 = Module['SDL2']; var numChannels = SDL2.capture.currentCaptureBuffer.numberOfChannels; for (var c = 0; c < numChannels; ++c) { var channelData = SDL2.capture.currentCaptureBuffer.getChannelData(c); if (channelData.length != $1) { throw 'Web Audio capture buffer length mismatch! Destination size: ' + channelData.length + ' samples vs expected ' + $1 + ' samples!'; } if (numChannels == 1) { for (var j = 0; j < $1; ++j) { setValue($0 + (j * 4), channelData[j], 'float'); } } else { for (var j = 0; j < $1; ++j) { setValue($0 + (((j * numChannels) + c) * 4), channelData[j], 'float'); } } } },  
- 1057366: ($0, $1) => { var SDL2 = Module['SDL2']; var numChannels = SDL2.audio.currentOutputBuffer['numberOfChannels']; for (var c = 0; c < numChannels; ++c) { var channelData = SDL2.audio.currentOutputBuffer['getChannelData'](c); if (channelData.length != $1) { throw 'Web Audio output buffer length mismatch! Destination size: ' + channelData.length + ' samples vs expected ' + $1 + ' samples!'; } for (var j = 0; j < $1; ++j) { channelData[j] = HEAPF32[$0 + ((j*numChannels + c) << 2) >> 2]; } } },  
- 1057846: ($0) => { var SDL2 = Module['SDL2']; if ($0) { if (SDL2.capture.silenceTimer !== undefined) { clearTimeout(SDL2.capture.silenceTimer); } if (SDL2.capture.stream !== undefined) { var tracks = SDL2.capture.stream.getAudioTracks(); for (var i = 0; i < tracks.length; i++) { SDL2.capture.stream.removeTrack(tracks[i]); } SDL2.capture.stream = undefined; } if (SDL2.capture.scriptProcessorNode !== undefined) { SDL2.capture.scriptProcessorNode.onaudioprocess = function(audioProcessingEvent) {}; SDL2.capture.scriptProcessorNode.disconnect(); SDL2.capture.scriptProcessorNode = undefined; } if (SDL2.capture.mediaStreamNode !== undefined) { SDL2.capture.mediaStreamNode.disconnect(); SDL2.capture.mediaStreamNode = undefined; } if (SDL2.capture.silenceBuffer !== undefined) { SDL2.capture.silenceBuffer = undefined } SDL2.capture = undefined; } else { if (SDL2.audio.scriptProcessorNode != undefined) { SDL2.audio.scriptProcessorNode.disconnect(); SDL2.audio.scriptProcessorNode = undefined; } SDL2.audio = undefined; } if ((SDL2.audioContext !== undefined) && (SDL2.audio === undefined) && (SDL2.capture === undefined)) { SDL2.audioContext.close(); SDL2.audioContext = undefined; } },  
- 1059018: ($0, $1, $2) => { var w = $0; var h = $1; var pixels = $2; if (!Module['SDL2']) Module['SDL2'] = {}; var SDL2 = Module['SDL2']; if (SDL2.ctxCanvas !== Module['canvas']) { SDL2.ctx = Module['createContext'](Module['canvas'], false, true); SDL2.ctxCanvas = Module['canvas']; } if (SDL2.w !== w || SDL2.h !== h || SDL2.imageCtx !== SDL2.ctx) { SDL2.image = SDL2.ctx.createImageData(w, h); SDL2.w = w; SDL2.h = h; SDL2.imageCtx = SDL2.ctx; } var data = SDL2.image.data; var src = pixels >> 2; var dst = 0; var num; if (typeof CanvasPixelArray !== 'undefined' && data instanceof CanvasPixelArray) { num = data.length; while (dst < num) { var val = HEAP32[src]; data[dst ] = val & 0xff; data[dst+1] = (val >> 8) & 0xff; data[dst+2] = (val >> 16) & 0xff; data[dst+3] = 0xff; src++; dst += 4; } } else { if (SDL2.data32Data !== data) { SDL2.data32 = new Int32Array(data.buffer); SDL2.data8 = new Uint8Array(data.buffer); SDL2.data32Data = data; } var data32 = SDL2.data32; num = data32.length; data32.set(HEAP32.subarray(src, src + num)); var data8 = SDL2.data8; var i = 3; var j = i + 4*num; if (num % 8 == 0) { while (i < j) { data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; } } else { while (i < j) { data8[i] = 0xff; i = i + 4 | 0; } } } SDL2.ctx.putImageData(SDL2.image, 0, 0); },  
- 1060487: ($0, $1, $2, $3, $4) => { var w = $0; var h = $1; var hot_x = $2; var hot_y = $3; var pixels = $4; var canvas = document.createElement("canvas"); canvas.width = w; canvas.height = h; var ctx = canvas.getContext("2d"); var image = ctx.createImageData(w, h); var data = image.data; var src = pixels >> 2; var dst = 0; var num; if (typeof CanvasPixelArray !== 'undefined' && data instanceof CanvasPixelArray) { num = data.length; while (dst < num) { var val = HEAP32[src]; data[dst ] = val & 0xff; data[dst+1] = (val >> 8) & 0xff; data[dst+2] = (val >> 16) & 0xff; data[dst+3] = (val >> 24) & 0xff; src++; dst += 4; } } else { var data32 = new Int32Array(data.buffer); num = data32.length; data32.set(HEAP32.subarray(src, src + num)); } ctx.putImageData(image, 0, 0); var url = hot_x === 0 && hot_y === 0 ? "url(" + canvas.toDataURL() + "), auto" : "url(" + canvas.toDataURL() + ") " + hot_x + " " + hot_y + ", auto"; var urlBuf = _malloc(url.length + 1); stringToUTF8(url, urlBuf, url.length + 1); return urlBuf; },  
- 1061476: ($0) => { if (Module['canvas']) { Module['canvas'].style['cursor'] = UTF8ToString($0); } },  
- 1061559: () => { if (Module['canvas']) { Module['canvas'].style['cursor'] = 'none'; } },  
- 1061628: () => { return window.innerWidth; },  
- 1061658: () => { return window.innerHeight; }
+  1128952: ($0) => { var str = UTF8ToString($0) + '\n\n' + 'Abort/Retry/Ignore/AlwaysIgnore? [ariA] :'; var reply = window.prompt(str, "i"); if (reply === null) { reply = "i"; } return allocate(intArrayFromString(reply), 'i8', ALLOC_NORMAL); },  
+ 1129177: () => { if (typeof(AudioContext) !== 'undefined') { return true; } else if (typeof(webkitAudioContext) !== 'undefined') { return true; } return false; },  
+ 1129324: () => { if ((typeof(navigator.mediaDevices) !== 'undefined') && (typeof(navigator.mediaDevices.getUserMedia) !== 'undefined')) { return true; } else if (typeof(navigator.webkitGetUserMedia) !== 'undefined') { return true; } return false; },  
+ 1129558: ($0) => { if(typeof(Module['SDL2']) === 'undefined') { Module['SDL2'] = {}; } var SDL2 = Module['SDL2']; if (!$0) { SDL2.audio = {}; } else { SDL2.capture = {}; } if (!SDL2.audioContext) { if (typeof(AudioContext) !== 'undefined') { SDL2.audioContext = new AudioContext(); } else if (typeof(webkitAudioContext) !== 'undefined') { SDL2.audioContext = new webkitAudioContext(); } if (SDL2.audioContext) { autoResumeAudioContext(SDL2.audioContext); } } return SDL2.audioContext === undefined ? -1 : 0; },  
+ 1130051: () => { var SDL2 = Module['SDL2']; return SDL2.audioContext.sampleRate; },  
+ 1130119: ($0, $1, $2, $3) => { var SDL2 = Module['SDL2']; var have_microphone = function(stream) { if (SDL2.capture.silenceTimer !== undefined) { clearTimeout(SDL2.capture.silenceTimer); SDL2.capture.silenceTimer = undefined; } SDL2.capture.mediaStreamNode = SDL2.audioContext.createMediaStreamSource(stream); SDL2.capture.scriptProcessorNode = SDL2.audioContext.createScriptProcessor($1, $0, 1); SDL2.capture.scriptProcessorNode.onaudioprocess = function(audioProcessingEvent) { if ((SDL2 === undefined) || (SDL2.capture === undefined)) { return; } audioProcessingEvent.outputBuffer.getChannelData(0).fill(0.0); SDL2.capture.currentCaptureBuffer = audioProcessingEvent.inputBuffer; dynCall('vi', $2, [$3]); }; SDL2.capture.mediaStreamNode.connect(SDL2.capture.scriptProcessorNode); SDL2.capture.scriptProcessorNode.connect(SDL2.audioContext.destination); SDL2.capture.stream = stream; }; var no_microphone = function(error) { }; SDL2.capture.silenceBuffer = SDL2.audioContext.createBuffer($0, $1, SDL2.audioContext.sampleRate); SDL2.capture.silenceBuffer.getChannelData(0).fill(0.0); var silence_callback = function() { SDL2.capture.currentCaptureBuffer = SDL2.capture.silenceBuffer; dynCall('vi', $2, [$3]); }; SDL2.capture.silenceTimer = setTimeout(silence_callback, ($1 / SDL2.audioContext.sampleRate) * 1000); if ((navigator.mediaDevices !== undefined) && (navigator.mediaDevices.getUserMedia !== undefined)) { navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(have_microphone).catch(no_microphone); } else if (navigator.webkitGetUserMedia !== undefined) { navigator.webkitGetUserMedia({ audio: true, video: false }, have_microphone, no_microphone); } },  
+ 1131771: ($0, $1, $2, $3) => { var SDL2 = Module['SDL2']; SDL2.audio.scriptProcessorNode = SDL2.audioContext['createScriptProcessor']($1, 0, $0); SDL2.audio.scriptProcessorNode['onaudioprocess'] = function (e) { if ((SDL2 === undefined) || (SDL2.audio === undefined)) { return; } SDL2.audio.currentOutputBuffer = e['outputBuffer']; dynCall('vi', $2, [$3]); }; SDL2.audio.scriptProcessorNode['connect'](SDL2.audioContext['destination']); },  
+ 1132181: ($0, $1) => { var SDL2 = Module['SDL2']; var numChannels = SDL2.capture.currentCaptureBuffer.numberOfChannels; for (var c = 0; c < numChannels; ++c) { var channelData = SDL2.capture.currentCaptureBuffer.getChannelData(c); if (channelData.length != $1) { throw 'Web Audio capture buffer length mismatch! Destination size: ' + channelData.length + ' samples vs expected ' + $1 + ' samples!'; } if (numChannels == 1) { for (var j = 0; j < $1; ++j) { setValue($0 + (j * 4), channelData[j], 'float'); } } else { for (var j = 0; j < $1; ++j) { setValue($0 + (((j * numChannels) + c) * 4), channelData[j], 'float'); } } } },  
+ 1132786: ($0, $1) => { var SDL2 = Module['SDL2']; var numChannels = SDL2.audio.currentOutputBuffer['numberOfChannels']; for (var c = 0; c < numChannels; ++c) { var channelData = SDL2.audio.currentOutputBuffer['getChannelData'](c); if (channelData.length != $1) { throw 'Web Audio output buffer length mismatch! Destination size: ' + channelData.length + ' samples vs expected ' + $1 + ' samples!'; } for (var j = 0; j < $1; ++j) { channelData[j] = HEAPF32[$0 + ((j*numChannels + c) << 2) >> 2]; } } },  
+ 1133266: ($0) => { var SDL2 = Module['SDL2']; if ($0) { if (SDL2.capture.silenceTimer !== undefined) { clearTimeout(SDL2.capture.silenceTimer); } if (SDL2.capture.stream !== undefined) { var tracks = SDL2.capture.stream.getAudioTracks(); for (var i = 0; i < tracks.length; i++) { SDL2.capture.stream.removeTrack(tracks[i]); } SDL2.capture.stream = undefined; } if (SDL2.capture.scriptProcessorNode !== undefined) { SDL2.capture.scriptProcessorNode.onaudioprocess = function(audioProcessingEvent) {}; SDL2.capture.scriptProcessorNode.disconnect(); SDL2.capture.scriptProcessorNode = undefined; } if (SDL2.capture.mediaStreamNode !== undefined) { SDL2.capture.mediaStreamNode.disconnect(); SDL2.capture.mediaStreamNode = undefined; } if (SDL2.capture.silenceBuffer !== undefined) { SDL2.capture.silenceBuffer = undefined } SDL2.capture = undefined; } else { if (SDL2.audio.scriptProcessorNode != undefined) { SDL2.audio.scriptProcessorNode.disconnect(); SDL2.audio.scriptProcessorNode = undefined; } SDL2.audio = undefined; } if ((SDL2.audioContext !== undefined) && (SDL2.audio === undefined) && (SDL2.capture === undefined)) { SDL2.audioContext.close(); SDL2.audioContext = undefined; } },  
+ 1134438: ($0, $1, $2) => { var w = $0; var h = $1; var pixels = $2; if (!Module['SDL2']) Module['SDL2'] = {}; var SDL2 = Module['SDL2']; if (SDL2.ctxCanvas !== Module['canvas']) { SDL2.ctx = Module['createContext'](Module['canvas'], false, true); SDL2.ctxCanvas = Module['canvas']; } if (SDL2.w !== w || SDL2.h !== h || SDL2.imageCtx !== SDL2.ctx) { SDL2.image = SDL2.ctx.createImageData(w, h); SDL2.w = w; SDL2.h = h; SDL2.imageCtx = SDL2.ctx; } var data = SDL2.image.data; var src = pixels >> 2; var dst = 0; var num; if (typeof CanvasPixelArray !== 'undefined' && data instanceof CanvasPixelArray) { num = data.length; while (dst < num) { var val = HEAP32[src]; data[dst ] = val & 0xff; data[dst+1] = (val >> 8) & 0xff; data[dst+2] = (val >> 16) & 0xff; data[dst+3] = 0xff; src++; dst += 4; } } else { if (SDL2.data32Data !== data) { SDL2.data32 = new Int32Array(data.buffer); SDL2.data8 = new Uint8Array(data.buffer); SDL2.data32Data = data; } var data32 = SDL2.data32; num = data32.length; data32.set(HEAP32.subarray(src, src + num)); var data8 = SDL2.data8; var i = 3; var j = i + 4*num; if (num % 8 == 0) { while (i < j) { data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; data8[i] = 0xff; i = i + 4 | 0; } } else { while (i < j) { data8[i] = 0xff; i = i + 4 | 0; } } } SDL2.ctx.putImageData(SDL2.image, 0, 0); },  
+ 1135907: ($0, $1, $2, $3, $4) => { var w = $0; var h = $1; var hot_x = $2; var hot_y = $3; var pixels = $4; var canvas = document.createElement("canvas"); canvas.width = w; canvas.height = h; var ctx = canvas.getContext("2d"); var image = ctx.createImageData(w, h); var data = image.data; var src = pixels >> 2; var dst = 0; var num; if (typeof CanvasPixelArray !== 'undefined' && data instanceof CanvasPixelArray) { num = data.length; while (dst < num) { var val = HEAP32[src]; data[dst ] = val & 0xff; data[dst+1] = (val >> 8) & 0xff; data[dst+2] = (val >> 16) & 0xff; data[dst+3] = (val >> 24) & 0xff; src++; dst += 4; } } else { var data32 = new Int32Array(data.buffer); num = data32.length; data32.set(HEAP32.subarray(src, src + num)); } ctx.putImageData(image, 0, 0); var url = hot_x === 0 && hot_y === 0 ? "url(" + canvas.toDataURL() + "), auto" : "url(" + canvas.toDataURL() + ") " + hot_x + " " + hot_y + ", auto"; var urlBuf = _malloc(url.length + 1); stringToUTF8(url, urlBuf, url.length + 1); return urlBuf; },  
+ 1136896: ($0) => { if (Module['canvas']) { Module['canvas'].style['cursor'] = UTF8ToString($0); } },  
+ 1136979: () => { if (Module['canvas']) { Module['canvas'].style['cursor'] = 'none'; } },  
+ 1137048: () => { return window.innerWidth; },  
+ 1137078: () => { return window.innerHeight; }
 };
 
 
@@ -8893,63 +8893,70 @@ var dynCall_iiiiijj = Module["dynCall_iiiiijj"] = createExportWrapper("dynCall_i
 /** @type {function(...*):?} */
 var dynCall_iiiiiijj = Module["dynCall_iiiiiijj"] = createExportWrapper("dynCall_iiiiiijj");
 
-var __ZN2jg6assets14install_assetsE = Module['__ZN2jg6assets14install_assetsE'] = 1053360;
-var __ZN2jg5maths11sin_cos_f32E = Module['__ZN2jg5maths11sin_cos_f32E'] = 1053348;
-var __ZN2jg6assets6assetsE = Module['__ZN2jg6assets6assetsE'] = 1053364;
-var __ZN2jg7surface11image_groupE = Module['__ZN2jg7surface11image_groupE'] = 1053508;
-var __ZN2jg7surface10set_colourE = Module['__ZN2jg7surface10set_colourE'] = 1053392;
-var __ZN2jg7surface5clearE = Module['__ZN2jg7surface5clearE'] = 1053452;
-var __ZN2jg7surface12set_viewportE = Module['__ZN2jg7surface12set_viewportE'] = 1053384;
-var __ZN2jg7surface5pixelE = Module['__ZN2jg7surface5pixelE'] = 1053460;
-var __ZN2jg7surface12solid_circleE = Module['__ZN2jg7surface12solid_circleE'] = 1053488;
-var __ZN2jg5maths8sqrt_f32E = Module['__ZN2jg5maths8sqrt_f32E'] = 1053352;
-var __ZN2jg7surface6circleE = Module['__ZN2jg7surface6circleE'] = 1053484;
-var __ZN2jg7surface9rectangleE = Module['__ZN2jg7surface9rectangleE'] = 1053472;
-var __ZN2jg7surface15set_colour_rgbaE = Module['__ZN2jg7surface15set_colour_rgbaE'] = 1053396;
-var __ZN2jg5maths7sin_f32E = Module['__ZN2jg5maths7sin_f32E'] = 1053340;
-var __ZN2jg5audio13reset_channelE = Module['__ZN2jg5audio13reset_channelE'] = 1053320;
-var __ZN2jg5audio12init_channelE = Module['__ZN2jg5audio12init_channelE'] = 1053316;
-var __ZN2jg5audio13set_amplitudeE = Module['__ZN2jg5audio13set_amplitudeE'] = 1053328;
-var __ZN2jg5audio13set_frequencyE = Module['__ZN2jg5audio13set_frequencyE'] = 1053324;
-var __ZN2jg7surface4tileE = Module['__ZN2jg7surface4tileE'] = 1053512;
-var __ZN2jg7surface6heightE = Module['__ZN2jg7surface6heightE'] = 1053380;
-var __ZN2jg7surface5widthE = Module['__ZN2jg7surface5widthE'] = 1053376;
-var __ZN2jg7surface4textE = Module['__ZN2jg7surface4textE'] = 1053516;
-var __ZN2jg7surface15solid_rectangleE = Module['__ZN2jg7surface15solid_rectangleE'] = 1053456;
-var __ZN2jg7surface9vert_lineE = Module['__ZN2jg7surface9vert_lineE'] = 1053468;
-var __ZN2jg7surface9horz_lineE = Module['__ZN2jg7surface9horz_lineE'] = 1053464;
-var __ZN2jg5maths26cohen_sutherland_clip_lineE = Module['__ZN2jg5maths26cohen_sutherland_clip_lineE'] = 1053356;
-var __ZN2jg7surface9set_alphaE = Module['__ZN2jg7surface9set_alphaE'] = 1053404;
-var __ZN2jg11api_versionE = Module['__ZN2jg11api_versionE'] = 1053304;
-var __ZN2jg5audio10set_volumeE = Module['__ZN2jg5audio10set_volumeE'] = 1053308;
-var __ZN2jg5audio10get_volumeE = Module['__ZN2jg5audio10get_volumeE'] = 1053312;
-var __ZN2jg5audio10set_filterE = Module['__ZN2jg5audio10set_filterE'] = 1053332;
-var __ZN2jg5audio5resetE = Module['__ZN2jg5audio5resetE'] = 1053336;
-var __ZN2jg5maths7cos_f32E = Module['__ZN2jg5maths7cos_f32E'] = 1053344;
-var __ZN2jg7surface10set_bufferE = Module['__ZN2jg7surface10set_bufferE'] = 1053368;
-var __ZN2jg7surface17get_pixel_addressE = Module['__ZN2jg7surface17get_pixel_addressE'] = 1053372;
-var __ZN2jg7surface14reset_viewportE = Module['__ZN2jg7surface14reset_viewportE'] = 1053388;
-var __ZN2jg7surface14set_colour_rgbE = Module['__ZN2jg7surface14set_colour_rgbE'] = 1053400;
-var __ZN2jg7surface19push_colour_currentE = Module['__ZN2jg7surface19push_colour_currentE'] = 1053408;
-var __ZN2jg7surface11push_colourE = Module['__ZN2jg7surface11push_colourE'] = 1053412;
-var __ZN2jg7surface16push_colour_rgbaE = Module['__ZN2jg7surface16push_colour_rgbaE'] = 1053416;
-var __ZN2jg7surface15push_colour_rgbE = Module['__ZN2jg7surface15push_colour_rgbE'] = 1053420;
-var __ZN2jg7surface10pop_colourE = Module['__ZN2jg7surface10pop_colourE'] = 1053424;
-var __ZN2jg7surface10push_alphaE = Module['__ZN2jg7surface10push_alphaE'] = 1053428;
-var __ZN2jg7surface9pop_alphaE = Module['__ZN2jg7surface9pop_alphaE'] = 1053432;
-var __ZN2jg7surface13set_clip_rectE = Module['__ZN2jg7surface13set_clip_rectE'] = 1053436;
-var __ZN2jg7surface15reset_clip_rectE = Module['__ZN2jg7surface15reset_clip_rectE'] = 1053440;
-var __ZN2jg7surface14push_clip_rectE = Module['__ZN2jg7surface14push_clip_rectE'] = 1053444;
-var __ZN2jg7surface13pop_clip_rectE = Module['__ZN2jg7surface13pop_clip_rectE'] = 1053448;
-var __ZN2jg7surface4lineE = Module['__ZN2jg7surface4lineE'] = 1053476;
-var __ZN2jg7surface10smoothlineE = Module['__ZN2jg7surface10smoothlineE'] = 1053480;
-var __ZN2jg7surface7ellipseE = Module['__ZN2jg7surface7ellipseE'] = 1053492;
-var __ZN2jg7surface13solid_ellipseE = Module['__ZN2jg7surface13solid_ellipseE'] = 1053496;
-var __ZN2jg7surface14solid_triangleE = Module['__ZN2jg7surface14solid_triangleE'] = 1053500;
-var __ZN2jg7surface5imageE = Module['__ZN2jg7surface5imageE'] = 1053504;
-var __ZN2jg7surface9abs_pixelE = Module['__ZN2jg7surface9abs_pixelE'] = 1053520;
-var __ZN2jg7surface13abs_horz_lineE = Module['__ZN2jg7surface13abs_horz_lineE'] = 1053524;
-var __ZN2jg7surface13abs_vert_lineE = Module['__ZN2jg7surface13abs_vert_lineE'] = 1053528;
+var __ZN2jg6assets14install_assetsE = Module['__ZN2jg6assets14install_assetsE'] = 1128752;
+var __ZN2jg5maths11sin_cos_f32E = Module['__ZN2jg5maths11sin_cos_f32E'] = 1128740;
+var __ZN2jg6assets6assetsE = Module['__ZN2jg6assets6assetsE'] = 1128756;
+var __ZN2jg7surface11image_groupE = Module['__ZN2jg7surface11image_groupE'] = 1128916;
+var __ZN2jg7surface10set_colourE = Module['__ZN2jg7surface10set_colourE'] = 1128784;
+var __ZN2jg7surface5clearE = Module['__ZN2jg7surface5clearE'] = 1128844;
+var __ZN2jg7surface12set_viewportE = Module['__ZN2jg7surface12set_viewportE'] = 1128776;
+var __ZN2jg7surface5pixelE = Module['__ZN2jg7surface5pixelE'] = 1128852;
+var __ZN2jg7surface12solid_circleE = Module['__ZN2jg7surface12solid_circleE'] = 1128884;
+var __ZN2jg5maths8sqrt_f32E = Module['__ZN2jg5maths8sqrt_f32E'] = 1128744;
+var __ZN2jg7surface6circleE = Module['__ZN2jg7surface6circleE'] = 1128876;
+var __ZN2jg7surface9rectangleE = Module['__ZN2jg7surface9rectangleE'] = 1128864;
+var __ZN2jg7surface15set_colour_rgbaE = Module['__ZN2jg7surface15set_colour_rgbaE'] = 1128788;
+var __ZN2jg5maths7sin_f32E = Module['__ZN2jg5maths7sin_f32E'] = 1128732;
+var __ZN2jg5audio13reset_channelE = Module['__ZN2jg5audio13reset_channelE'] = 1128712;
+var __ZN2jg5audio12init_channelE = Module['__ZN2jg5audio12init_channelE'] = 1128708;
+var __ZN2jg5audio13set_amplitudeE = Module['__ZN2jg5audio13set_amplitudeE'] = 1128720;
+var __ZN2jg5audio13set_frequencyE = Module['__ZN2jg5audio13set_frequencyE'] = 1128716;
+var __ZN2jg7surface4tileE = Module['__ZN2jg7surface4tileE'] = 1128920;
+var __ZN2jg7surface6heightE = Module['__ZN2jg7surface6heightE'] = 1128772;
+var __ZN2jg7surface5widthE = Module['__ZN2jg7surface5widthE'] = 1128768;
+var __ZN2jg7surface4textE = Module['__ZN2jg7surface4textE'] = 1128924;
+var __ZN2jg7surface15solid_rectangleE = Module['__ZN2jg7surface15solid_rectangleE'] = 1128848;
+var __ZN2jg7surface9vert_lineE = Module['__ZN2jg7surface9vert_lineE'] = 1128860;
+var __ZN2jg7surface9horz_lineE = Module['__ZN2jg7surface9horz_lineE'] = 1128856;
+var __ZN2jg5maths26cohen_sutherland_clip_lineE = Module['__ZN2jg5maths26cohen_sutherland_clip_lineE'] = 1128748;
+var __ZN2jg7surface9set_alphaE = Module['__ZN2jg7surface9set_alphaE'] = 1128796;
+var __ZN2jg11api_versionE = Module['__ZN2jg11api_versionE'] = 1128696;
+var __ZN2jg5audio10set_volumeE = Module['__ZN2jg5audio10set_volumeE'] = 1128700;
+var __ZN2jg5audio10get_volumeE = Module['__ZN2jg5audio10get_volumeE'] = 1128704;
+var __ZN2jg5audio10set_filterE = Module['__ZN2jg5audio10set_filterE'] = 1128724;
+var __ZN2jg5audio5resetE = Module['__ZN2jg5audio5resetE'] = 1128728;
+var __ZN2jg5maths7cos_f32E = Module['__ZN2jg5maths7cos_f32E'] = 1128736;
+var __ZN2jg7surface10set_bufferE = Module['__ZN2jg7surface10set_bufferE'] = 1128760;
+var __ZN2jg7surface17get_pixel_addressE = Module['__ZN2jg7surface17get_pixel_addressE'] = 1128764;
+var __ZN2jg7surface14reset_viewportE = Module['__ZN2jg7surface14reset_viewportE'] = 1128780;
+var __ZN2jg7surface14set_colour_rgbE = Module['__ZN2jg7surface14set_colour_rgbE'] = 1128792;
+var __ZN2jg7surface19push_colour_currentE = Module['__ZN2jg7surface19push_colour_currentE'] = 1128800;
+var __ZN2jg7surface11push_colourE = Module['__ZN2jg7surface11push_colourE'] = 1128804;
+var __ZN2jg7surface16push_colour_rgbaE = Module['__ZN2jg7surface16push_colour_rgbaE'] = 1128808;
+var __ZN2jg7surface15push_colour_rgbE = Module['__ZN2jg7surface15push_colour_rgbE'] = 1128812;
+var __ZN2jg7surface10pop_colourE = Module['__ZN2jg7surface10pop_colourE'] = 1128816;
+var __ZN2jg7surface10push_alphaE = Module['__ZN2jg7surface10push_alphaE'] = 1128820;
+var __ZN2jg7surface9pop_alphaE = Module['__ZN2jg7surface9pop_alphaE'] = 1128824;
+var __ZN2jg7surface13set_clip_rectE = Module['__ZN2jg7surface13set_clip_rectE'] = 1128828;
+var __ZN2jg7surface15reset_clip_rectE = Module['__ZN2jg7surface15reset_clip_rectE'] = 1128832;
+var __ZN2jg7surface14push_clip_rectE = Module['__ZN2jg7surface14push_clip_rectE'] = 1128836;
+var __ZN2jg7surface13pop_clip_rectE = Module['__ZN2jg7surface13pop_clip_rectE'] = 1128840;
+var __ZN2jg7surface4lineE = Module['__ZN2jg7surface4lineE'] = 1128868;
+var __ZN2jg7surface11smooth_lineE = Module['__ZN2jg7surface11smooth_lineE'] = 1128872;
+var __ZN2jg7surface13smooth_circleE = Module['__ZN2jg7surface13smooth_circleE'] = 1128880;
+var __ZN2jg7surface19smooth_solid_circleE = Module['__ZN2jg7surface19smooth_solid_circleE'] = 1128888;
+var __ZN2jg7surface3arcE = Module['__ZN2jg7surface3arcE'] = 1128892;
+var __ZN2jg7surface10smooth_arcE = Module['__ZN2jg7surface10smooth_arcE'] = 1128896;
+var __ZN2jg7surface7ellipseE = Module['__ZN2jg7surface7ellipseE'] = 1128900;
+var __ZN2jg7surface13solid_ellipseE = Module['__ZN2jg7surface13solid_ellipseE'] = 1128904;
+var __ZN2jg7surface14solid_triangleE = Module['__ZN2jg7surface14solid_triangleE'] = 1128908;
+var __ZN2jg7surface5imageE = Module['__ZN2jg7surface5imageE'] = 1128912;
+var __ZN2jg7surface11draw_bitmapE = Module['__ZN2jg7surface11draw_bitmapE'] = 1128928;
+var __ZN2jg7surface10abs_bitmapE = Module['__ZN2jg7surface10abs_bitmapE'] = 1128932;
+var __ZN2jg7surface9abs_pixelE = Module['__ZN2jg7surface9abs_pixelE'] = 1128936;
+var __ZN2jg7surface15abs_pixel_blendE = Module['__ZN2jg7surface15abs_pixel_blendE'] = 1128940;
+var __ZN2jg7surface13abs_horz_lineE = Module['__ZN2jg7surface13abs_horz_lineE'] = 1128944;
+var __ZN2jg7surface13abs_vert_lineE = Module['__ZN2jg7surface13abs_vert_lineE'] = 1128948;
 
 
 
